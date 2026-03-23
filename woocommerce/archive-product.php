@@ -2,7 +2,6 @@
 /**
  * Archive Product (Shop / Collection) Page — Pepora Health
  * WooCommerce template override
- * Converted from Shopify collection.liquid
  *
  * @package Pepora
  */
@@ -10,43 +9,24 @@
 defined('ABSPATH') || exit;
 
 get_header();
-?>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     COLLECTION PAGE — Pepora Health
-     ═══════════════════════════════════════════════════════════════ -->
+// Get all products directly
+$args = array(
+    'status' => 'publish',
+    'limit'  => -1,
+    'orderby' => 'title',
+    'order'   => 'ASC',
+);
+$products = wc_get_products($args);
+?>
 
 <!-- COLLECTION HEADER -->
 <section class="collection-hero">
   <div class="container">
     <div class="collection-hero-eyebrow">Pepora Health</div>
-    <h1 class="collection-hero-title">
-      <?php
-      if (is_shop()) {
-          echo 'All Compounds';
-      } elseif (is_product_category()) {
-          single_cat_title();
-      } elseif (is_product_tag()) {
-          single_tag_title();
-      } else {
-          woocommerce_page_title();
-      }
-      ?>
-    </h1>
-    <?php
-    if (is_product_category()) {
-        $term = get_queried_object();
-        if ($term && !empty($term->description)) {
-            echo '<p class="collection-hero-desc">' . esc_html($term->description) . '</p>';
-        }
-    }
-    ?>
+    <h1 class="collection-hero-title">All Compounds</h1>
     <div class="collection-meta">
-      <?php
-      global $wp_query;
-      $product_count = $wp_query->found_posts;
-      ?>
-      <span class="collection-count"><?php echo esc_html($product_count); ?> compound<?php echo $product_count !== 1 ? 's' : ''; ?></span>
+      <span class="collection-count"><?php echo count($products); ?> compounds</span>
       <span class="collection-stock-label">
         <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="4" fill="#4ECDC4"/></svg>
         In Stock Now
@@ -58,52 +38,57 @@ get_header();
 <!-- PRODUCTS GRID -->
 <section class="section bg-gun">
   <div class="container">
-    <?php if (woocommerce_product_loop()) : ?>
-
+    <?php if (!empty($products)) : ?>
       <div class="collection-grid">
-        <?php
-        while (have_posts()) : the_post();
-          wc_get_template_part('content', 'product');
-        endwhile;
+        <?php foreach ($products as $product) :
+          $product_id    = $product->get_id();
+          $product_link  = get_permalink($product_id);
+          $product_title = $product->get_name();
+          $terms = get_the_terms($product_id, 'product_cat');
+          $product_type = ($terms && !is_wp_error($terms)) ? $terms[0]->name : '';
         ?>
-      </div>
-
-      <?php
-      /* ─── Pagination ─── */
-      $total_pages = $wp_query->max_num_pages;
-      if ($total_pages > 1) :
-        $current_page = max(1, get_query_var('paged'));
-      ?>
-        <nav class="pagination" aria-label="Collection pagination">
-          <?php if ($current_page > 1) : ?>
-            <a href="<?php echo esc_url(get_pagenum_link($current_page - 1)); ?>" class="btn btn-ghost btn-sm">&larr; Previous</a>
-          <?php endif; ?>
-
-          <div class="pagination-numbers">
-            <?php
-            for ($i = 1; $i <= $total_pages; $i++) :
-              if ($i === $current_page) :
-            ?>
-                <span class="pagination-link pagination-current"><?php echo esc_html($i); ?></span>
-              <?php else : ?>
-                <a href="<?php echo esc_url(get_pagenum_link($i)); ?>" class="pagination-link"><?php echo esc_html($i); ?></a>
+          <div class="product-card">
+            <a href="<?php echo esc_url($product_link); ?>" class="product-card__img">
+              <?php
+              $thumb_id = $product->get_image_id();
+              if ($thumb_id) :
+                echo wp_get_attachment_image($thumb_id, 'pepora-product-thumb', false, array(
+                  'loading' => 'lazy',
+                  'alt'     => esc_attr($product_title),
+                ));
+              else : ?>
+                <div class="product-card__img-placeholder">PEPORA</div>
               <?php endif; ?>
-            <?php endfor; ?>
+            </a>
+
+            <div class="product-card__body">
+              <a href="<?php echo esc_url($product_link); ?>" class="product-card__title"><?php echo esc_html($product_title); ?></a>
+              <div class="product-card__price"><?php echo $product->get_price_html(); ?></div>
+            </div>
+
+            <div class="product-card__cta">
+              <?php if ($product->is_in_stock()) : ?>
+                <button
+                  class="product-card__btn js-add-to-cart"
+                  data-product-id="<?php echo esc_attr($product_id); ?>"
+                  aria-label="Add <?php echo esc_attr($product_title); ?> to cart"
+                >
+                  Add to Cart
+                </button>
+              <?php else : ?>
+                <button class="product-card__btn" disabled style="opacity:0.4;cursor:not-allowed;">
+                  Sold Out
+                </button>
+              <?php endif; ?>
+            </div>
           </div>
-
-          <?php if ($current_page < $total_pages) : ?>
-            <a href="<?php echo esc_url(get_pagenum_link($current_page + 1)); ?>" class="btn btn-ghost btn-sm">Next &rarr;</a>
-          <?php endif; ?>
-        </nav>
-      <?php endif; ?>
-
+        <?php endforeach; ?>
+      </div>
     <?php else : ?>
-
       <div style="text-align:center;padding:4rem 0;">
         <p class="t-body" style="color:var(--c50);">No products in this collection yet. Check back soon.</p>
         <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-ghost" style="margin-top:1.5rem;">Back to Home</a>
       </div>
-
     <?php endif; ?>
   </div>
 </section>
