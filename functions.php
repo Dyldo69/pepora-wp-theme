@@ -18,7 +18,7 @@ function pepora_enqueue_assets() {
         'pepora-style',
         get_template_directory_uri() . '/pepora.css',
         array(),
-        '1.0'
+        filemtime(get_template_directory() . '/pepora.css')
     );
 
     // Theme JS
@@ -26,7 +26,7 @@ function pepora_enqueue_assets() {
         'pepora-js',
         get_template_directory_uri() . '/pepora.js',
         array(),
-        '1.0',
+        filemtime(get_template_directory() . '/pepora.js'),
         true
     );
 

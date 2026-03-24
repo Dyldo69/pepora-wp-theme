@@ -157,7 +157,7 @@
         <div class="product-card">
             <a href="<?php echo esc_url(get_permalink($product_obj->get_id())); ?>" class="product-card__img">
                 <?php if ($product_obj->get_image_id()) : ?>
-                    <img src="<?php echo esc_url(wp_get_attachment_image_url($product_obj->get_image_id(), 'medium')); ?>" alt="<?php echo esc_attr($product_obj->get_name()); ?>" loading="lazy">
+                    <img src="<?php echo esc_url(wp_get_attachment_image_url($product_obj->get_image_id(), 'large')); ?>" alt="<?php echo esc_attr($product_obj->get_name()); ?>" loading="lazy">
                 <?php else : ?>
                     <div class="product-card__img-placeholder">PEPORA</div>
                 <?php endif; ?>
