@@ -23,7 +23,6 @@
       <a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>" class="<?php if (is_shop() || is_product_category()) echo 'active'; ?>">Shop</a>
       <a href="<?php echo esc_url(home_url('/science/')); ?>">The Science</a>
       <a href="<?php echo esc_url(get_permalink(get_option('page_for_posts'))); ?>" class="<?php if (is_home() || is_single()) echo 'active'; ?>">Journal</a>
-      <a href="<?php echo esc_url(home_url('/consult/')); ?>">Consult</a>
       <a href="<?php echo esc_url(home_url('/contact/')); ?>">Contact</a>
     </nav>
 
@@ -64,7 +63,6 @@
   <a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>">Shop</a>
   <a href="<?php echo esc_url(home_url('/science/')); ?>">The Science</a>
   <a href="<?php echo esc_url(get_permalink(get_option('page_for_posts'))); ?>">Journal</a>
-  <a href="<?php echo esc_url(home_url('/consult/')); ?>">Consult</a>
   <a href="<?php echo esc_url(home_url('/contact/')); ?>">Contact</a>
 </nav>
 <div class="nav-overlay" id="navOverlay"></div>
